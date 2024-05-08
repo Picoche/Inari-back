@@ -1,6 +1,5 @@
 import React from 'react';
 import {useDroppable} from '@dnd-kit/core';
-import {motion} from 'framer-motion';
 
 interface DroppableProps {
   children: React.ReactNode;
@@ -19,11 +18,11 @@ export default function DroppableComponent(props: DroppableProps): JSX.Element {
   const filledClasses = "border-2 border-solid border-gray-200";
 
   return (
-    <motion.div 
+    <div 
       ref={setNodeRef} 
       className={`${baseClasses} ${isEmpty ? emptyClasses : filledClasses} ${props.className}`}
     >
       {props.children}
-    </motion.div>
+    </div>
   );
 }

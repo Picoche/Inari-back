@@ -3,45 +3,52 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import DroppableComponent from '@/components/ui/DroppableComponent';
-import {DndContext, DragEndEvent, UniqueIdentifier} from '@dnd-kit/core';
+import {DndContext, DragEndEvent, DragStartEvent, UniqueIdentifier} from '@dnd-kit/core';
 
+// Définition de l'interface pour les éléments déposés
 interface DroppedElement {
   id: UniqueIdentifier;
+  originalId: UniqueIdentifier; // Ajout de la propriété originalId
   node: React.ReactElement;
 }
-
 export default function Home() {
   const containers = ['A', 'B', 'C'];
   const [showAside, setShowAside] = useState(false);
   const [draggables, setDraggables] = useState<{[key: string]: React.ReactElement}>({
-    '2': <Button variant="secondary" draggable id='2'>Button 2</Button>,
-    '3': <Button variant="destructive" draggable id='3'>Button 3</Button>
+    '0': <Button variant="secondary" draggable id='0'>Button 2</Button>,
+    '1': <Button variant="destructive" draggable id='1'>Button 3</Button>
   });
   const [droppedElements, setDroppedElements] = useState<DroppedElement[]>([]);
 
-  const toggleAside = () => {
-    setShowAside(!showAside);
-  };
+  const toggleAside = () => setShowAside(prev => !prev);
 
   function handleDragEnd(event: DragEndEvent) {
-    const {over, active} = event;
-  
-    if (over) {
-      const newId = `${active.id}-${over.id}`;
-      const nodeCopy = React.cloneElement(draggables[active.id], {id: newId, key: newId});
-  
-      setDroppedElements(prev => {
-        const filtered = prev.filter(el => el.node.key !== active.id);
-  
-        const index = filtered.findIndex(el => el.id === over.id);
-  
-        if (index === -1) {
-          return [...filtered, {id: over.id, node: nodeCopy}];
-        } else {
-          return [...filtered.slice(0, index), {id: over.id, node: nodeCopy}, ...filtered.slice(index + 1)];
-        }
-      });
+    const {active, over} = event;
+    const {id} = active
+    const containerId = over?.id;
+
+    if (containerId) {
+      if (droppedElements.find(el => el.id === containerId)) {
+        replaceDroppedElementByCurrentlyDraggedElement(containerId);
+      } else {
+        addDroppedElement(containerId, id);
+      }
     }
+  }
+
+  function addDroppedElement(id: UniqueIdentifier, originalId: UniqueIdentifier) {
+    const nodeCopy = draggables[originalId] ? React.cloneElement(draggables[originalId], {id, key: id}) : React.cloneElement(draggables[originalId], {id, key: id});
+    setDroppedElements(prev => [...prev, {id, originalId, node: nodeCopy}]);
+  }
+
+  function replaceDroppedElementByCurrentlyDraggedElement(id: UniqueIdentifier) {
+    setDroppedElements(prev => {
+      const index = prev.findIndex(el => el.id === id);
+      const {originalId} = prev[index];
+      const nodeCopy = draggables[originalId] ? React.cloneElement(draggables[originalId], {id, key: id}) : React.cloneElement(draggables[index], {id, key: id});
+
+      return [...prev.slice(0, index), {id, originalId, node: nodeCopy}, ...prev.slice(index + 1)];
+    });
   }
 
   return (
