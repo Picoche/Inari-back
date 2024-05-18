@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ReactElementWithComponentType } from "@/app/page";
+import { FiCircle } from "react-icons/fi";
+import { useDraggable } from "@dnd-kit/core";
 
 interface AvailableElementsMenuProps {
   showAside: boolean;
@@ -42,6 +44,16 @@ const AvailableElementsMenu: React.FC<AvailableElementsMenuProps> = ({
 
   const sortedDisplayNames = Object.keys(draggablesByDisplayName).sort();
 
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: "color-picker",
+  });
+
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+      }
+    : undefined;
+
   return (
     <aside
       className={`transform transition-transform duration-300 ease-in-out h-full w-full bg-gray-800 text-white p-4 ${
@@ -79,6 +91,15 @@ const AvailableElementsMenu: React.FC<AvailableElementsMenuProps> = ({
               </div>
             </div>
           ))}
+        </div>
+        <div
+          ref={setNodeRef}
+          style={style}
+          {...listeners}
+          {...attributes}
+          className="p-2 bg-gray-700 rounded-md cursor-pointer"
+        >
+          <FiCircle style={{ color: "#000", width: "24px", height: "24px" }} />
         </div>
         <div className="mt-4 w-full">
           <h2 className="text-lg font-semibold text-orange-500">Comportement</h2>
