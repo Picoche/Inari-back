@@ -22,6 +22,11 @@ const predefinedLayouts = {
 };
 
 export default function Home() {
+  const predefinedLayouts: { [key: string]: string[] } = {
+    layout1: ["A", "B", "C"],
+    layout2: ["A", "B", "C", "D"],
+    layout3: ["A", "B"],
+  };
   const [layout, setLayout] = useState("layout1");
   const containers = predefinedLayouts[layout];
   const [showAside, setShowAside] = useState(false);
