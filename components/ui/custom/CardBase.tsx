@@ -18,21 +18,27 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React from "react";
+import React, { useState } from "react";
+import ColorPicker from "@/components/ui/ColorPicker";
 
 const CardBase = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ draggable = false, id }) => {
+  const [headerColor, setHeaderColor] = useState("#ffffff");
+  const [contentColor, setContentColor] = useState("#ffffff");
+  const [footerColor, setFooterColor] = useState("#ffffff");
+
   return (
     <Card draggable={draggable} id={id} className="w-[350px]">
-      <CardHeader>
+      <CardHeader style={{ backgroundColor: headerColor }}>
         <CardTitle>Créer un produit</CardTitle>
         <CardDescription>
           Ajoutez votre nouveau produit en un clic.
         </CardDescription>
+        <ColorPicker color={headerColor} onChange={setHeaderColor} />
       </CardHeader>
-      <CardContent>
+      <CardContent style={{ backgroundColor: contentColor }}>
         <form>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
@@ -55,10 +61,12 @@ const CardBase = React.forwardRef<
             </div>
           </div>
         </form>
+        <ColorPicker color={contentColor} onChange={setContentColor} />
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-between" style={{ backgroundColor: footerColor }}>
         <Button variant="outline">Annuler</Button>
         <Button>Ajouter</Button>
+        <ColorPicker color={footerColor} onChange={setFooterColor} />
       </CardFooter>
     </Card>
   );

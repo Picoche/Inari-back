@@ -15,8 +15,15 @@ export type ReactElementWithComponentType = React.ReactElement & {
   type: React.ComponentType<any>;
 };
 
+const predefinedLayouts = {
+  layout1: ["A", "B", "C"],
+  layout2: ["A", "B", "C", "D"],
+  layout3: ["A", "B"],
+};
+
 export default function Home() {
-  const containers = ["A", "B", "C"];
+  const [layout, setLayout] = useState("layout1");
+  const containers = predefinedLayouts[layout];
   const [showAside, setShowAside] = useState(false);
   const [switchBehaviour, setSwitchBehaviour] =
     useState<SwitchElementsBehaviour>({ mode: "swapAndKeep" });
@@ -139,12 +146,25 @@ export default function Home() {
         switchBehaviour={switchBehaviour}
         updateSwitchBehaviour={updateSwitchBehaviour}
       />
-      <Button onClick={toggleAside}>{showAside ? "Fermer" : "Ouvrir"}</Button>
-      <div className="mx-auto max-w-screen-lg px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-3 gap-4">
+      <Button onClick={toggleAside} className="bg-orange-500 text-white">
+        {showAside ? "Fermer" : "Ouvrir"}
+      </Button>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between mb-4">
+          <Button onClick={() => setLayout("layout1")} className="bg-orange-500 text-white">
+            Layout 1
+          </Button>
+          <Button onClick={() => setLayout("layout2")} className="bg-orange-500 text-white">
+            Layout 2
+          </Button>
+          <Button onClick={() => setLayout("layout3")} className="bg-orange-500 text-white">
+            Layout 3
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {containers.map((id, index) => (
             <DroppableComponent
-              className={`col-span-${(index % 2) + 1} row-span-${
+              className={`col-span-1 sm:col-span-${(index % 2) + 1} lg:col-span-${
                 (index % 3) + 1
               }`}
               key={id}
