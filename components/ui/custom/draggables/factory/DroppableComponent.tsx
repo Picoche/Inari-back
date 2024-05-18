@@ -21,10 +21,10 @@ export default function DroppableComponent(props: DroppableProps): JSX.Element {
 
   const handleMouseMove = (e: MouseEvent) => {
     if (isResizing) {
-      setSize({
-        width: e.clientX - e.currentTarget.getBoundingClientRect().left,
-        height: e.clientY - e.currentTarget.getBoundingClientRect().top,
-      });
+      setSize((prevSize) => ({
+        width: prevSize.width + e.movementX,
+        height: prevSize.height + e.movementY,
+      }));
     }
   };
 
@@ -47,7 +47,7 @@ export default function DroppableComponent(props: DroppableProps): JSX.Element {
   }, [isResizing]);
 
   const isEmpty = !React.Children.count(props.children) || props.children === 'Placez un élément ici !';
-  const baseClasses = "m-4 p-4 min-h-[100px] transition-colors duration-1000 relative"
+  const baseClasses = "m-4 p-4 min-h-[100px] transition-colors duration-1000 relative";
   const emptyClasses = "border-2 border-dashed border-gray-400 animate-pulse";
   const filledClasses = "border-2 border-solid border-gray-200";
 
@@ -65,4 +65,3 @@ export default function DroppableComponent(props: DroppableProps): JSX.Element {
     </div>
   );
 }
-
