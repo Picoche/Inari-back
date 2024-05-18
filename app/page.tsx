@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import DroppableComponent from "@/components/ui/custom/draggables/factory/DroppableComponent";
 import { DndContext, DragEndEvent, UniqueIdentifier } from "@dnd-kit/core";
 import AvailableElementsMenu from "@/components/CMS/AvailableElementsMenu";
+import LayoutMenu from "@/components/CMS/LayoutMenu";
 import { CardBase } from "@/components/ui/custom/CardBase";
 
 interface SwitchElementsBehaviour {
@@ -15,6 +16,8 @@ export type ReactElementWithComponentType = React.ReactElement & {
   type: React.ComponentType<any>;
 };
 
+
+
 const predefinedLayouts = {
   layout1: ["A", "B", "C"],
   layout2: ["A", "B", "C", "D"],
@@ -22,8 +25,15 @@ const predefinedLayouts = {
 };
 
 export default function Home() {
+  const predefinedLayouts: Record<string, string[]> = {
+    layout1: ["A", "B", "C"],
+    layout2: ["A", "B", "C", "D"],
+    layout3: ["A", "B"],
+  };
   const [layout, setLayout] = useState("layout1");
+  const [hoverLayout, setHoverLayout] = useState<string | null>(null);
   const containers = predefinedLayouts[layout];
+  const hoverContainers = hoverLayout ? predefinedLayouts[hoverLayout] : [];
   const [showAside, setShowAside] = useState(false);
   const [switchBehaviour, setSwitchBehaviour] =
     useState<SwitchElementsBehaviour>({ mode: "swapAndKeep" });
@@ -150,17 +160,6 @@ export default function Home() {
         {showAside ? "Fermer" : "Ouvrir"}
       </Button>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between mb-4">
-          <Button onClick={() => setLayout("layout1")} className="bg-orange-500 text-white">
-            Layout 1
-          </Button>
-          <Button onClick={() => setLayout("layout2")} className="bg-orange-500 text-white">
-            Layout 2
-          </Button>
-          <Button onClick={() => setLayout("layout3")} className="bg-orange-500 text-white">
-            Layout 3
-          </Button>
-        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {containers.map((id, index) => (
             <DroppableComponent
@@ -175,8 +174,22 @@ export default function Home() {
                 : "Placez un élément ici !"}
             </DroppableComponent>
           ))}
+          {hoverContainers.map((id, index) => (
+            <DroppableComponent
+              className={`col-span-1 sm:col-span-${(index % 2) + 1} lg:col-span-${
+                (index % 3) + 1
+              } opacity-50 pointer-events-none`}
+              key={id}
+              id={id}
+            >
+              {droppedElements[id]
+                ? droppedElements[id]
+                : "Placez un élément ici !"}
+            </DroppableComponent>
+          ))}
         </div>
       </div>
+      <LayoutMenu setLayout={setLayout} setHoverLayout={setHoverLayout} />
     </DndContext>
   );
 }
